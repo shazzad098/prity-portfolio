@@ -426,6 +426,26 @@ function About() {
 }
 
 function Skills() {
+  const [activeCard, setActiveCard] = useState<string | null>(null);
+  const [isTouch, setIsTouch] = useState(false);
+
+  useEffect(() => {
+    setIsTouch("ontouchstart" in window || navigator.maxTouchPoints > 0);
+
+    const handleOutsideClick = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest(".skill-card")) {
+        setActiveCard(null);
+      }
+    };
+    document.addEventListener("click", handleOutsideClick);
+    document.addEventListener("touchstart", handleOutsideClick);
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick);
+    };
+  }, []);
+
   const cardHeaderVariants = {
     initial: { height: 180 },
     hover: { height: 68 }
@@ -491,87 +511,97 @@ function Skills() {
   return (
     <Section id="skills" eyebrow="02 — Skills" title="Tools I build and ship with">
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {skillGroups.map((g, i) => (
-          <motion.div
-            key={g.title}
-            initial="initial"
-            whileHover="hover"
-            viewport={{ once: true }}
-            className="relative w-full h-[365px] rounded-3xl bg-card border border-border/80 shadow-soft hover:shadow-glow hover:border-primary/20 transition-all duration-500 overflow-hidden cursor-pointer flex flex-col group"
-          >
-            {/* Collapsible Minimalist Header section */}
-            <motion.div 
-              variants={cardHeaderVariants}
-              transition={{ type: "spring", stiffness: 220, damping: 23 }}
-              className="relative w-full bg-muted/20 dark:bg-muted/10 border-b border-border/40 overflow-hidden shrink-0"
-            >
-              {/* Minimalist dot grid background pattern */}
-              <div className="absolute inset-0 bg-[radial-gradient(var(--color-border)_1px,transparent_1px)] [background-size:12px_12px] opacity-60" />
-            </motion.div>
-
-            {/* Shifting Icon Container */}
+        {skillGroups.map((g, i) => {
+          const isCardActive = activeCard === g.title;
+          return (
             <motion.div
-              variants={cardIconVariants}
-              transition={{ type: "spring", stiffness: 220, damping: 23 }}
-              className="absolute p-3.5 rounded-2xl bg-background border border-border/60 shadow-md flex items-center justify-center text-primary z-20"
+              key={g.title}
+              initial="initial"
+              animate={isCardActive ? "hover" : "initial"}
+              whileHover="hover"
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveCard(isCardActive ? null : g.title);
+              }}
+              viewport={{ once: true }}
+              className="skill-card relative w-full h-[365px] rounded-3xl bg-card border border-border/80 shadow-soft hover:shadow-glow hover:border-primary/20 transition-all duration-500 overflow-hidden cursor-pointer flex flex-col group"
             >
-              <g.icon className="size-7" />
-            </motion.div>
+              {/* Collapsible Minimalist Header section */}
+              <motion.div 
+                variants={cardHeaderVariants}
+                transition={{ type: "spring", stiffness: 220, damping: 23 }}
+                className="relative w-full bg-muted/20 dark:bg-muted/10 border-b border-border/40 overflow-hidden shrink-0"
+              >
+                {/* Minimalist dot grid background pattern */}
+                <div className="absolute inset-0 bg-[radial-gradient(var(--color-border)_1px,transparent_1px)] [background-size:12px_12px] opacity-60" />
+              </motion.div>
 
-            {/* Shifting Card Title */}
-            <motion.h3 
-              variants={cardTitleVariants}
-              transition={{ type: "spring", stiffness: 220, damping: 23 }}
-              className="absolute font-extrabold text-foreground z-20 origin-left"
-            >
-              {g.title}
-            </motion.h3>
+              {/* Shifting Icon Container */}
+              <motion.div
+                variants={cardIconVariants}
+                transition={{ type: "spring", stiffness: 220, damping: 23 }}
+                className="absolute p-3.5 rounded-2xl bg-background border border-border/60 shadow-md flex items-center justify-center text-primary z-20"
+              >
+                <g.icon className="size-7" />
+              </motion.div>
 
-            {/* Unhovered Call To Action / Tagline */}
-            <motion.div
-              variants={cardHintVariants}
-              transition={{ type: "spring", stiffness: 250, damping: 25 }}
-              className="absolute w-full text-center left-0 flex flex-col items-center gap-1.5"
-              style={{ top: "250px" }}
-            >
-              <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground bg-muted/65 px-2.5 py-1 rounded-full border border-border">
-                {g.items.length} Skills
-              </span>
-              <p className="text-xs font-mono tracking-wider text-primary/80 flex items-center gap-1 animate-pulse">
-                <Sparkles className="size-3" /> Hover to explore
-              </p>
-            </motion.div>
+              {/* Shifting Card Title */}
+              <motion.h3 
+                variants={cardTitleVariants}
+                transition={{ type: "spring", stiffness: 220, damping: 23 }}
+                className="absolute font-extrabold text-foreground z-20 origin-left"
+              >
+                {g.title}
+              </motion.h3>
 
-            {/* Staggered Skills List with Animated Progress Bars (Revealed on Hover) */}
-            <motion.div
-              variants={listContainerVariants}
-              className="absolute left-6 right-6 top-[78px] bottom-6 flex flex-col justify-center gap-3.5 pointer-events-none group-hover:pointer-events-auto z-10"
-            >
-              {g.items.map((item, idx) => (
-                <motion.div key={item.name} variants={rowVariants} className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold">
-                    <span className="text-foreground/90">{item.name}</span>
-                    <span className="font-mono text-primary/95 text-[10px]">{item.level}%</span>
-                  </div>
-                  {/* Progress track */}
-                  <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
-                    {/* Inner progress bar */}
-                    <motion.div
-                      variants={{
-                        initial: { width: "0%" },
-                        hover: { 
-                          width: `${item.level}%`,
-                          transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.15 + idx * 0.04 }
-                        }
-                      }}
-                      className="h-full bg-primary rounded-full"
-                    />
-                  </div>
-                </motion.div>
-              ))}
+              {/* Unhovered Call To Action / Tagline */}
+              <motion.div
+                variants={cardHintVariants}
+                transition={{ type: "spring", stiffness: 250, damping: 25 }}
+                className="absolute w-full text-center left-0 flex flex-col items-center gap-1.5"
+                style={{ top: "250px" }}
+              >
+                <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground bg-muted/65 px-2.5 py-1 rounded-full border border-border">
+                  {g.items.length} Skills
+                </span>
+                <p className="text-xs font-mono tracking-wider text-primary/80 flex items-center gap-1 animate-pulse">
+                  <Sparkles className="size-3" /> {isTouch ? "Tap to explore" : "Hover to explore"}
+                </p>
+              </motion.div>
+
+              {/* Staggered Skills List with Animated Progress Bars (Revealed on Hover) */}
+              <motion.div
+                variants={listContainerVariants}
+                className={`absolute left-6 right-6 top-[78px] bottom-6 flex flex-col justify-center gap-3.5 pointer-events-none group-hover:pointer-events-auto z-10 transition-all duration-300 ${
+                  isCardActive ? "pointer-events-auto opacity-100" : ""
+                }`}
+              >
+                {g.items.map((item, idx) => (
+                  <motion.div key={item.name} variants={rowVariants} className="space-y-1">
+                    <div className="flex justify-between text-xs font-semibold">
+                      <span className="text-foreground/90">{item.name}</span>
+                      <span className="font-mono text-primary/95 text-[10px]">{item.level}%</span>
+                    </div>
+                    {/* Progress track */}
+                    <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                      {/* Inner progress bar */}
+                      <motion.div
+                        variants={{
+                          initial: { width: "0%" },
+                          hover: { 
+                            width: `${item.level}%`,
+                            transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.15 + idx * 0.04 }
+                          }
+                        }}
+                        className="h-full bg-primary rounded-full"
+                      />
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
             </motion.div>
-          </motion.div>
-        ))}
+          );
+        })}
       </div>
     </Section>
   );
