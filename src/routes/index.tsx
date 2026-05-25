@@ -385,7 +385,7 @@ function Hero() {
               View Projects
               <ArrowUpRight className="size-4 group-hover:rotate-45 transition-transform" />
             </a>
-            <a href={cvFile} download="Prity_Ahoshan_cv.pdf" className="inline-flex items-center gap-2 bg-card border border-border font-semibold px-6 py-3.5 rounded-full hover:border-primary transition-colors">
+            <a href={cvFile} download="prity_ahoshan_cv.pdf" className="inline-flex items-center gap-2 bg-card border border-border font-semibold px-6 py-3.5 rounded-full hover:border-primary transition-colors">
               <Download className="size-4" /> Download CV
             </a>
           </div>
