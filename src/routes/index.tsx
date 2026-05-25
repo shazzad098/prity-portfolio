@@ -4,7 +4,9 @@ import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react
 import {
   ArrowUpRight, Mail, MapPin, Download,
   Code2, Palette, Bug, Database, Award, GraduationCap, Sparkles, FileText, X,
+  Sun, Moon, Menu,
 } from "lucide-react";
+
 
 const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -177,6 +179,26 @@ const universityCertificates = [
 ];
 
 function Nav() {
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const isDark = document.documentElement.classList.contains("dark");
+    setTheme(isDark ? "dark" : "light");
+  }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === "light" ? "dark" : "light";
+    setTheme(nextTheme);
+    if (nextTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  };
+
   const links = [
     { href: "#about", label: "About" },
     { href: "#skills", label: "Skills" },
@@ -184,27 +206,129 @@ function Nav() {
     { href: "#experience", label: "Experience" },
     { href: "#contact", label: "Contact" },
   ];
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <a href="#top" className="inline-flex items-center py-1">
-          <img src={signImage} alt="Signature Logo" className="h-9 w-auto object-contain dark:invert" />
-        </a>
-        <div className="hidden md:flex items-center gap-7 text-sm font-medium text-muted-foreground">
-          {links.map((l) => (
-            <a key={l.href} href={l.href} className="story-link hover:text-foreground transition-colors">
-              {l.label}
+    <>
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <a href="#top" className="inline-flex items-center py-1">
+            <img src={signImage} alt="Signature Logo" className="h-9 w-auto object-contain dark:invert" />
+          </a>
+          <div className="hidden md:flex items-center gap-7 text-sm font-medium text-muted-foreground">
+            {links.map((l) => (
+              <a key={l.href} href={l.href} className="story-link hover:text-foreground transition-colors">
+                {l.label}
+              </a>
+            ))}
+          </div>
+          <div className="flex items-center gap-3">
+            <motion.button
+              onClick={toggleTheme}
+              className="p-2.5 rounded-full bg-muted/60 hover:bg-muted border border-border text-foreground transition-colors duration-200 shadow-sm relative overflow-hidden flex items-center justify-center cursor-pointer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label="Toggle Theme"
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={theme}
+                  initial={{ y: -20, opacity: 0, rotate: -45 }}
+                  animate={{ y: 0, opacity: 1, rotate: 0 }}
+                  exit={{ y: 20, opacity: 0, rotate: 45 }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
+                  className="flex items-center justify-center"
+                >
+                  {theme === "light" ? (
+                    <Moon className="size-5 text-foreground" />
+                  ) : (
+                    <Sun className="size-5 text-primary" />
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </motion.button>
+            
+            <a
+              href="#contact"
+              className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold bg-foreground text-background px-4 py-2 rounded-full hover:opacity-90 transition-opacity"
+            >
+              Let's Talk <ArrowUpRight className="size-3.5" />
             </a>
-          ))}
+
+            {/* Hamburger Button */}
+            <motion.button
+              onClick={() => setIsOpen(!isOpen)}
+              className="md:hidden p-2.5 rounded-full bg-muted/60 hover:bg-muted border border-border text-foreground transition-colors duration-200 shadow-sm flex items-center justify-center cursor-pointer z-50"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label="Toggle Menu"
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={isOpen ? "close" : "menu"}
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex items-center justify-center"
+                >
+                  {isOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+                </motion.div>
+              </AnimatePresence>
+            </motion.button>
+          </div>
         </div>
-        <a
-          href="#contact"
-          className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold bg-foreground text-background px-4 py-2 rounded-full hover:opacity-90 transition-opacity"
-        >
-          Let's Talk <ArrowUpRight className="size-3.5" />
-        </a>
-      </div>
-    </nav>
+      </nav>
+
+      {/* Mobile Drawer Menu Overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop Blur overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 z-40 bg-background/80 backdrop-blur-lg md:hidden"
+            />
+            {/* Mobile Menu Panel */}
+            <motion.div
+              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 300, damping: 28 }}
+              className="fixed top-20 left-4 right-4 z-40 p-8 rounded-3xl bg-card border border-border/80 shadow-glow md:hidden flex flex-col gap-6"
+            >
+              <div className="flex flex-col gap-4 text-center">
+                {links.map((l, index) => (
+                  <motion.a
+                    key={l.href}
+                    href={l.href}
+                    onClick={() => setIsOpen(false)}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="text-lg font-semibold py-2 text-foreground/80 hover:text-primary transition-colors border-b border-border/40 last:border-0"
+                  >
+                    {l.label}
+                  </motion.a>
+                ))}
+              </div>
+              <motion.a
+                href="#contact"
+                onClick={() => setIsOpen(false)}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: links.length * 0.05 }}
+                className="w-full flex items-center justify-center gap-1.5 text-base font-bold bg-foreground text-background px-6 py-3.5 rounded-full hover:opacity-90 transition-opacity mt-4 shadow-sm"
+              >
+                Let's Talk <ArrowUpRight className="size-4" />
+              </motion.a>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
