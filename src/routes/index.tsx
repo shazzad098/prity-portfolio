@@ -23,7 +23,7 @@ import prityImage from "@/assets/prity.png";
 import projectResults from "@/assets/project-results.jpg";
 import projectHospital from "@/assets/project-hospital.jpg";
 import projectShop from "@/assets/project-shop.jpg";
-import cvFile from "@/assets/CV.pdf";
+import cvFile from "@/assets/cv.pdf";
 import signImage from "@/assets/sign.png";
 import cert1 from "@/assets/certificates/Certificate (1).pdf";
 import cert2 from "@/assets/certificates/Certificate (2).pdf";
@@ -385,7 +385,7 @@ function Hero() {
               View Projects
               <ArrowUpRight className="size-4 group-hover:rotate-45 transition-transform" />
             </a>
-            <a href={cvFile} download="Prity_Ahoshan_CV.pdf" className="inline-flex items-center gap-2 bg-card border border-border font-semibold px-6 py-3.5 rounded-full hover:border-primary transition-colors">
+            <a href={cvFile} download="Prity_Ahoshan_cv.pdf" className="inline-flex items-center gap-2 bg-card border border-border font-semibold px-6 py-3.5 rounded-full hover:border-primary transition-colors">
               <Download className="size-4" /> Download CV
             </a>
           </div>
