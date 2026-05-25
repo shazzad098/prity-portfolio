@@ -122,7 +122,7 @@ const projects = [
   {
     title: "Smart Online Shopping Store",
     description: "E-commerce inspired application with product display, shopping logic, and user-friendly layout.",
-    tags: ["PHP", "MySQL", "HTML/CSS"],
+    tags: ["ANGULAR", "MySQL", "HTML/CSS"],
     image: projectShop,
     href: "https://github.com/Prity409/Smart-Online-Shopping-Store-Management-System",
   },
