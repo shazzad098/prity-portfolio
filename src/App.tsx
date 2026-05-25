@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react";
 import {
@@ -36,17 +35,6 @@ import nsdaCert5 from "@/assets/certificates/NSDA/Certificate_5.pdf";
 import nsdaCert6 from "@/assets/certificates/NSDA/Certificate_6.pdf";
 import nsdaCert7 from "@/assets/certificates/NSDA/Certificate_7.pdf";
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Prity Ahoshan — Frontend Developer, UI Designer, SQA" },
-      { name: "description", content: "Portfolio of Prity Ahoshan — Frontend Developer, UI Designer, and SQA Enthusiast based in Dhaka, Bangladesh." },
-      { property: "og:title", content: "Prity Ahoshan — Portfolio" },
-      { property: "og:description", content: "Frontend Developer, UI Designer, SQA Enthusiast." },
-    ],
-  }),
-  component: Index,
-});
 
 const skillGroups = [
   {
@@ -1111,7 +1099,7 @@ function CustomCursor() {
   );
 }
 
-function Index() {
+export default function App() {
   return (
     <div className="min-h-screen bg-background text-foreground antialiased">
       <CustomCursor />
